@@ -97,6 +97,7 @@
   margin-top: 20px;
 }
 .qrCard {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -107,8 +108,10 @@
   padding: 10px 8px 8px;
   border: 1px solid rgba(242, 238, 225, 0.14);
   background: rgba(255, 255, 255, 0.01);
+  cursor: pointer;
 }
 .qrCard:hover { border-color: rgba(212, 167, 44, 0.7); }
+.qrCard:focus-visible { outline: 2px solid #fcdc04; outline-offset: 3px; }
 .qrImg {
   width: 100%;
   max-width: 120px;

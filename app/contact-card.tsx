@@ -85,21 +85,21 @@ export default function ContactCard() {
         </div>
 
         <div className="qrGrid">
-          <a href={googleContactsUrl} target="_blank" rel="noreferrer" className="qrCard">
+          <button type="button" className="qrCard" onClick={saveToContacts}>
             <img
-              src="/qr-save-contact.svg"
-              alt="QR code to save Namisi Derrick to contacts"
+              src="/api/qr/contact"
+              alt="QR code to add Namisi Derrick to contacts"
               className="qrImg"
             />
-            <span>Save contact</span>
-          </a>
-          <a href="https://www.education.go.ug" target="_blank" rel="noreferrer" className="qrCard">
+            <span>Tap to add contact</span>
+          </button>
+          <a href="/" className="qrCard">
             <img
-              src="/qr-ministry-website.svg"
-              alt="QR code to the Ministry of Education and Sports website"
+              src="/api/qr/card"
+              alt="QR code to open Namisi Derrick's digital contact card"
               className="qrImg"
             />
-            <span>Ministry site</span>
+            <span>Open this card</span>
           </a>
         </div>
 
