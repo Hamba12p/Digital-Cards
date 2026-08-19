@@ -145,9 +145,9 @@ export default function ContactCard() {
             <img
               src="/api/qr/contact"
               alt="QR code to add Namisi Derrick to contacts"
-              className="qrImg"
+              className="qrImg contactQrImg"
             />
-            <span>Tap to add contact</span>
+            <span>Scan or tap to add contact</span>
           </button>
           {showOwnerQr && (
             <a

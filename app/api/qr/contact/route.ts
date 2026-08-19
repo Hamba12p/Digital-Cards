@@ -1,10 +1,12 @@
 import QRCode from "qrcode";
+import { buildVcard } from "../../../contact";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
-export async function GET(request: Request) {
-  const vcardUrl = new URL("/api/vcard", request.url).toString();
-  const svg = await QRCode.toString(vcardUrl, {
+export async function GET() {
+  // Encode the contact itself so recognized mobile scanners can open a
+  // populated Add Contact screen without first visiting this website.
+  const svg = await QRCode.toString(buildVcard({ compact: true }), {
     type: "svg",
     errorCorrectionLevel: "M",
     margin: 2,
@@ -19,7 +21,7 @@ export async function GET(request: Request) {
     headers: {
       "Content-Type": "image/svg+xml; charset=utf-8",
       "Content-Disposition": 'inline; filename="namisi-derrick-contact-qr.svg"',
-      "Cache-Control": "no-store",
+      "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
     },
   });
 }
