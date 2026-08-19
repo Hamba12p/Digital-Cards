@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Phone, Mail, Share2, Download, UserPlus } from "lucide-react";
 
 const googleContactsUrl =
@@ -14,8 +14,57 @@ const googleContactsUrl =
     email: "derricknamisi@gmail.com",
   }).toString();
 
+const ownerQrLongPressMs = 650;
+
 export default function ContactCard() {
   const [saved, setSaved] = useState(false);
+  const [showOwnerQr, setShowOwnerQr] = useState(false);
+  const crestTapTimes = useRef<number[]>([]);
+  const ownerQrPressTimer = useRef<number | null>(null);
+  const ownerQrLongPressTriggered = useRef(false);
+
+  function handleCrestTap() {
+    const now = Date.now();
+    const recentTaps = [...crestTapTimes.current.filter((tap) => now - tap < 3000), now];
+
+    if (recentTaps.length >= 3) {
+      crestTapTimes.current = [];
+      setShowOwnerQr((visible) => !visible);
+      return;
+    }
+
+    crestTapTimes.current = recentTaps;
+  }
+
+  function cancelOwnerQrLongPress() {
+    if (ownerQrPressTimer.current !== null) {
+      window.clearTimeout(ownerQrPressTimer.current);
+      ownerQrPressTimer.current = null;
+    }
+  }
+
+  function startOwnerQrLongPress() {
+    cancelOwnerQrLongPress();
+    ownerQrLongPressTriggered.current = false;
+    ownerQrPressTimer.current = window.setTimeout(() => {
+      ownerQrPressTimer.current = null;
+      ownerQrLongPressTriggered.current = true;
+
+      const downloadLink = document.createElement("a");
+      downloadLink.href = "/api/qr/card?download=1";
+      downloadLink.download = "namisi-derrick-card-qr.svg";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      downloadLink.remove();
+    }, ownerQrLongPressMs);
+  }
+
+  function handleOwnerQrClick(event: React.MouseEvent<HTMLAnchorElement>) {
+    if (!ownerQrLongPressTriggered.current) return;
+
+    event.preventDefault();
+    ownerQrLongPressTriggered.current = false;
+  }
 
   function saveToContacts() {
     // iOS Safari opens this inline into the native Add Contact sheet.
@@ -46,7 +95,14 @@ export default function ContactCard() {
         <div className="innerBorder" />
         <p className="eyebrow">Republic of Uganda · Digital Contact</p>
 
-        <div className="sealWrap">
+        <button
+          type="button"
+          className="sealWrap"
+          onClick={handleCrestTap}
+          aria-label="Coat of Arms of the Republic of Uganda"
+          aria-controls="owner-card-qr"
+          aria-expanded={showOwnerQr}
+        >
           {/* Official coat of arms — served from /public, swap the file there if the ministry supplies updated artwork */}
           <img
             src="/coat-of-arms-uganda.png"
@@ -56,7 +112,7 @@ export default function ContactCard() {
             style={{ width: 148, height: "auto" }}
             className="crestImg"
           />
-        </div>
+        </button>
 
         <div className="identity">
           <h1 className="name">Namisi Derrick</h1>
@@ -84,7 +140,7 @@ export default function ContactCard() {
           </button>
         </div>
 
-        <div className="qrGrid">
+        <div className={`qrGrid${showOwnerQr ? "" : " qrGridSingle"}`}>
           <button type="button" className="qrCard" onClick={saveToContacts}>
             <img
               src="/api/qr/contact"
@@ -93,14 +149,27 @@ export default function ContactCard() {
             />
             <span>Tap to add contact</span>
           </button>
-          <a href="/" className="qrCard">
-            <img
-              src="/api/qr/card"
-              alt="QR code to open Namisi Derrick's digital contact card"
-              className="qrImg"
-            />
-            <span>Open this card</span>
-          </a>
+          {showOwnerQr && (
+            <a
+              id="owner-card-qr"
+              href="/"
+              className="qrCard ownerQrCard"
+              onPointerDown={startOwnerQrLongPress}
+              onPointerUp={cancelOwnerQrLongPress}
+              onPointerCancel={cancelOwnerQrLongPress}
+              onPointerLeave={cancelOwnerQrLongPress}
+              onClick={handleOwnerQrClick}
+              onContextMenu={(event) => event.preventDefault()}
+            >
+              <img
+                src="/api/qr/card"
+                alt="QR code to open Namisi Derrick's digital contact card"
+                className="qrImg"
+                draggable={false}
+              />
+              <span>Open this card</span>
+            </a>
+          )}
         </div>
 
         <div className="fields">

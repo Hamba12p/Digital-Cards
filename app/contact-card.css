@@ -48,7 +48,17 @@ html {
   margin-bottom: 24px;
 }
 
-.sealWrap { display: flex; justify-content: center; margin-bottom: 20px; }
+.sealWrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 0 0 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.sealWrap:focus-visible { outline: 2px solid #fcdc04; outline-offset: 3px; }
 .crestImg { filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5)); }
 
 .identity { text-align: center; margin-bottom: 28px; }
@@ -107,6 +117,11 @@ html {
   gap: 12px;
   margin-top: 20px;
 }
+.qrGridSingle { grid-template-columns: minmax(0, 1fr); }
+.qrGridSingle .qrCard {
+  width: calc((100% - 12px) / 2);
+  justify-self: center;
+}
 .qrCard {
   width: 100%;
   display: flex;
@@ -123,6 +138,11 @@ html {
 }
 .qrCard:hover { border-color: rgba(212, 167, 44, 0.7); }
 .qrCard:focus-visible { outline: 2px solid #fcdc04; outline-offset: 3px; }
+.ownerQrCard {
+  -webkit-touch-callout: none;
+  user-select: none;
+  touch-action: manipulation;
+}
 .qrImg {
   width: 100%;
   max-width: 120px;

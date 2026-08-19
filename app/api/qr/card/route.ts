@@ -3,7 +3,11 @@ import QRCode from "qrcode";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const cardUrl = new URL("/", request.url).toString();
+  const requestUrl = new URL(request.url);
+  const cardUrl = new URL("/", requestUrl).toString();
+  const contentDisposition = requestUrl.searchParams.get("download") === "1"
+    ? 'attachment; filename="namisi-derrick-card-qr.svg"'
+    : 'inline; filename="namisi-derrick-card-qr.svg"';
   const svg = await QRCode.toString(cardUrl, {
     type: "svg",
     errorCorrectionLevel: "M",
@@ -18,7 +22,7 @@ export async function GET(request: Request) {
   return new Response(svg, {
     headers: {
       "Content-Type": "image/svg+xml; charset=utf-8",
-      "Content-Disposition": 'inline; filename="namisi-derrick-card-qr.svg"',
+      "Content-Disposition": contentDisposition,
       "Cache-Control": "no-store",
     },
   });
